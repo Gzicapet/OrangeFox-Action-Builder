@@ -76,7 +76,9 @@ jobs:
 
     - name: Build Environment
       run: |
-        sudo apt install aria2 linux-modules-extra-$(uname -r) zram-tools -y
+        # FIX: linux-modules-extra-$(uname -r) may not exist for runner kernel
+        sudo apt install -y aria2 zram-tools || true
+        sudo apt install -y linux-modules-extra-$(uname -r) 2>/dev/null || echo "linux-modules-extra not available (non-fatal)"
         git clone https://gitlab.com/OrangeFox/misc/scripts.git -b master
         cd scripts
         sudo bash setup/android_build_env.sh
