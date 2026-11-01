@@ -178,6 +178,12 @@ jobs:
         git clone ${{ inputs.DEVICE_TREE }} -b ${{ inputs.DEVICE_TREE_BRANCH }} ./${{ inputs.DEVICE_PATH }}
         cd ${{ inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        # FIX: current OrangeFox rejects the obsolete FOX_VERSION variable.
+        if [ -f vendorsetup.sh ]; then
+          sed -i 's/export FOX_VERSION=/export FOX_MAINTAINER_PATCH_VERSION=/g' vendorsetup.sh
+          echo "==> sanitized vendorsetup.sh (FOX_VERSION -> FOX_MAINTAINER_PATCH_VERSION)"
+          grep -n 'FOX_MAINTAINER_PATCH_VERSION' vendorsetup.sh || true
+        fi
 
     - name: Update OrangeFox Built-in Magisk
       run: |
